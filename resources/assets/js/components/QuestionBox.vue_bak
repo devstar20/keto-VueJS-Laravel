@@ -1,0 +1,123 @@
+<template>
+    <div class="desktop-container" id="desktop-container">
+        <b-jumbotron class="question-box">
+            <template v-slot:header>
+                <img src="../../images/images/icons/back.svg" alt="" class="btn-back" @click="goBack">
+                <img src="../../images/images/logo1b26.svg" alt="" class="logo">
+                
+            </template>
+            <b-progress height="5px" :value="progressValue" class="mb-2 progress"></b-progress>
+            <b-container>
+                <b-row>
+                    <b-col class="question">{{ currentQuestion.question }}</b-col>
+                </b-row>
+                <b-list-group class="fancy-radio-holder">
+                    <b-list-group-item @click="selectAnswer(index)" v-for="(answer, index) in answers" :key="index" class="list-question fancy-radio btn-single">
+                        {{ answer }}
+                        <p class="status" v-bind:class="{ status_active: isActiveStatus }"></p>
+                        <p class="status-icon" v-bind:class="{ icon_active: isActiveStatus }">{{ questionStatus }}</p>
+                    </b-list-group-item>
+                </b-list-group>
+            </b-container>
+            
+        </b-jumbotron>
+    </div>
+</template>
+<script>
+export default {
+    props: {
+        currentQuestion: Object,
+        next: Function,
+        increment: Function
+    },
+    data() {
+        return {
+            selectedIndex: null,
+            progressValue: 14,
+            questionStatus: "-",
+            isActiveStatus: false
+        }
+    },
+    computed: {
+        answers() {
+            let answers = this.currentQuestion.answers
+            return answers
+        }
+    },
+    methods: {
+        selectAnswer(index) {
+            this.selectedIndex = index
+            this.next(index)
+            if (this.questionStatus == "-")
+                this.questionStatus = "+"
+            else 
+                this.questionStatus = "-"
+            let isCorrect = false
+            this.increment(isCorrect)                          
+            this.isActiveStatus = !this.isActiveStatus
+        },
+        goBack() {
+            this.$router.go(-1)
+            this.isActiveStatus = false
+        }
+    }
+}
+</script>
+<style>
+.question {
+    color: #444;
+    font-family: Karla;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: .85px;
+    line-height: 29px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+</style>
+<style scoped>
+h1 {
+    margin-top: 0px;
+}
+.logo {
+    max-width: 125px;
+    max-height: 45px;
+    padding-left: 15px;
+}
+.question-box {
+    padding: 0px;
+    border-radius: 9px;
+    background-color: #fff;
+    box-shadow: 0 4px 11px -2px rgba(86, 70, 143, .3);
+    -webkit-box-shadow: 0 4px 11px -2px rgba(86, 70, 143, .3);
+}
+@media only screen and (min-width: 1000px) {
+    .question-box {
+        max-width: 600px;
+        grid-column-start: 2;
+        grid-column-end: five;
+        grid-row-start: row1-start;
+        grid-row-end: 3;
+    }
+}
+.btn-back {
+    position: relative;
+}
+.progress {
+    background-color: #bbb5d2;
+}
+.list-question {
+    margin-bottom: 15px;
+    border-radius: 9px;
+    border-width: 0px;
+    box-shadow: 0 4px 11px -7px rgba(0, 0, 0, .2);
+    -webkit-box-shadow: 0 4px 11px -7px rgba(0, 0, 0, .3);
+}
+
+.status_active {
+    background-color: purple;
+}
+.icon_active {
+    right: 7px;
+}
+</style>
